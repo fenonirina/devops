@@ -1,0 +1,45 @@
+name: CI/CD Next.js
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  # =========================
+  # CD : Déploiement
+  # =========================
+  deploy:
+    name: CD - Deploy to Ubuntu
+    runs-on: self-hosted
+
+    steps:
+      # =========================
+      # Déploiement
+      # =========================
+      - name: Déployer Next.js
+        run: |
+          set -e
+
+          echo "=== Début du déploiement ==="
+
+          cd "/home/fenonirina/Modèles/M1/DevOps/Projet/devops"
+
+          echo "=== Récupération du nouveau code ==="
+          git pull origin main
+
+          echo "=== Installation des dépendances ==="
+          npm ci
+
+          echo "=== Build Next.js ==="
+          npm run build
+
+          echo "=== Redémarrage de Next.js ==="
+          pm2 restart devops
+
+          echo "=== Vérification PM2 ==="
+          pm2 status
+
+          echo "=== Déploiement terminé ==="
